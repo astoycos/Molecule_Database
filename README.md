@@ -2,4 +2,4 @@
 
 Group 8
 
-Test description
+Group Members: Andrew Stoycos, Eric Li, David Payne, Matthew Hormis, Jacob Zweig
