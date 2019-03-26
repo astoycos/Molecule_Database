@@ -2,13 +2,41 @@ package com.company;
 import java.util.HashMap;
 import java.util.Vector;
 import java.io.*;
+//import java.sql.*;
 
 public class database {
+
+    // JDBC driver name and database URL
+//    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+//    static final String DB_URL = "jdbc:mysql://localhost/EMP";
+//
+//    //  Database credentials
+//    static final String USER = "username";
+//    static final String PASS = "password";
+    public void writeToFile(String fileContent) throws IOException
+    {
+        // Create a variable and check if database file already exists
+        File tempFile = new File("database.txt");
+        boolean exists = tempFile.exists();
+        // If yes, then append to it
+        if (exists == true) {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("database.txt", true));
+            writer.newLine();
+            writer.write(fileContent);
+            writer.close();
+        } else {
+            // Else create file, add headers, then add content
+            BufferedWriter writer = new BufferedWriter(new FileWriter("database.txt"));
+            writer.write("Structure" + " " + "Name");
+            writer.newLine();
+            writer.write(fileContent);
+            writer.close();
+        }
+    }
 
     //Constructor: make database by making new HashMap
     public database() {
         data = new HashMap<>();
-
     }
 
     //Function: Add molecule to database by reading in text file
@@ -30,6 +58,7 @@ public class database {
                 count += 1;
             }
             data.put(key, value);
+            writeToFile(key + " " + value);
             System.out.println("Molecule " + value+ " added");
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");

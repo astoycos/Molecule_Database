@@ -1,0 +1,4 @@
+Structure Name
+[3, H, O, H, 0 1, 1 2] water
+[4, N, H, H, H, 0 1, 0 2, 0 3] ammonia
+[3, C, O, O, 0 1, 0 1, 0 2, 0 2] carbon dioxide
