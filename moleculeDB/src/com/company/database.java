@@ -107,18 +107,29 @@ public class database {
     //Function (WIP):
     public boolean findCompound(String TextFile) {
         String line = null;
+        Graph<String, DefaultEdge> key2 = new Multigraph<>(DefaultEdge.class);
         Vector<String> key = new Vector<>();
         String value = new String();
         int count = 0;
         try {
             BufferedReader read = new BufferedReader(new FileReader(TextFile));
             while ((line = read.readLine())!= null) {
-                if (count != 0) {
-                    key.addElement(line);
+                if (count == 0) {
+                    value = line;
+                } else if(count > 1){
+                    key.addElement(line + (count - 2));
+                    if(line.length() == 1){
+                        key2.addVertex(line + (count - 2));
+                    }else{
+                        String[] edge = line.split(" ");
+                        key2.addEdge(key.get(Integer.parseInt(edge[0])),key.get(Integer.parseInt(edge[1])));
+                    }
+
                 }
                 count += 1;
             }
-            value = data.get(key);
+
+            value = data.get(key2);
             if (value == null) {
                 //System.out.println("No molecule found");
                 return false;
