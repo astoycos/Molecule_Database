@@ -11,11 +11,6 @@ public class Main {
         database DB = new database();
         DB.addCompound("water.txt");
         DB.addCompound("water.txt");
-        DB.addCompound("water.txt");
-        DB.addCompound("glucose.txt");
-        DB.addCompound("carbon_dioxide.txt");
-        DB.addCompound("ammonia.txt");
-        DB.addCompound("acetic_acid.txt");
         DB.addCompound("glucose.txt");
         //find molecule
         if ((DB.findCompound("water.txt")) == true) {
