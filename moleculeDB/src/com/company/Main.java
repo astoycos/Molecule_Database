@@ -16,9 +16,9 @@ public class Main {
         DB.addCompound("water.txt");
         DB.addCompound("water.txt");
         DB.addCompound("glucose.txt");
-        //find molecule
+//        find molecule
         if ((DB.findCompound("water.txt")) == true) {
-            System.out.println("Molecule name: water");
+            System.out.println("Molecule found");
         }
         //} catch() {
             //e.printStackTrace();
