@@ -57,9 +57,17 @@ public class database {
                 }
                 count += 1;
             }
+
             data.put(key, value);
             writeToFile(key + " " + value);
             System.out.println("Molecule " + value+ " added");
+            if (findCompound(value + ".txt") == false) { // only add when the molecule does not exist
+                data.put(key, value);
+                System.out.println("Molecule " + value + " added");
+            }
+            else {
+                System.out.println("Molecule " + value + " already exists");
+            }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
         } catch (IOException ex) {
@@ -68,7 +76,7 @@ public class database {
     }
 
     //Function (WIP):
-    public void findCompound(String TextFile) {
+    public boolean findCompound(String TextFile) {
         String line = null;
         Vector<String> key = new Vector<>();
         String value = new String();
@@ -83,15 +91,18 @@ public class database {
             }
             value = data.get(key);
             if (value == null) {
-                System.out.println("No molecule found");
+                //System.out.println("No molecule found");
+                return false;
             } else {
-                System.out.println("Molecule name: " + value);
+                //System.out.println("Molecule name: " + value);
+                return true;
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
         } catch (IOException ex) {
             System.out.println("IO");
         }
+        return false;
     }
 
     //Field: HashMap with key as vector of the vertices/structure and value as molecule name(data)

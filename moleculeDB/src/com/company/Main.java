@@ -14,10 +14,12 @@ public class Main {
         //String filename = "water.txt";
         database DB = new database();
         DB.addCompound("water.txt");
-        DB.addCompound("ammonia.txt");
-        DB.addCompound("carbon_dioxide.txt");
-        DB.findCompound("acetylene.txt");
-        DB.findCompound("water.txt");
+        DB.addCompound("water.txt");
+        DB.addCompound("glucose.txt");
+        //find molecule
+        if ((DB.findCompound("water.txt")) == true) {
+            System.out.println("Molecule name: water");
+        }
         //} catch() {
             //e.printStackTrace();
         //}
