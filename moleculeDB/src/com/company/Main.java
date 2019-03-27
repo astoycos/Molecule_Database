@@ -19,6 +19,7 @@ public class Main {
         DB.addCompound("water.txt");
         DB.addCompound("ammonia.txt");
         DB.printDB();
+        System.out.println("Welcome to MoleculeDB");
         Scanner scanner = new Scanner(System.in);
 
         String input;
