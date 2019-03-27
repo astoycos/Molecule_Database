@@ -18,8 +18,9 @@ public class Main {
 
         DB.addCompound("water.txt");
         DB.addCompound("ammonia.txt");
-        DB.printDB();
-        System.out.println("Welcome to MoleculeDB");
+        DB.findCompound("water.txt",false);
+        //DB.printDB();
+
         Scanner scanner = new Scanner(System.in);
 
         String input;
@@ -32,7 +33,9 @@ public class Main {
             if (input_splitted[1].equals( "-addMolecule")){
                 DB.addCompound(input_splitted[2]);
             }else if (input_splitted[1].equals("-findMolecule")){
-                DB.findCompound(input_splitted[2]);
+                DB.findCompound(input_splitted[2],false);
+            }else if (input_splitted[1].equals("print")){
+                DB.printDB();
             }
 
             // DB.addCompound("carbon_dioxide.txt");
@@ -42,11 +45,6 @@ public class Main {
             input = scanner.nextLine();
 
         }
-
-        //database DB = new database();
-        //} catch() {
-        //e.printStackTrace();
-        //}
 
     }
 }

@@ -12,17 +12,14 @@ import java.io.*;
 public class database {
 
     //Field: HashMap with key as vector of the vertices/structure and value as molecule name(data)
-    HashMap<Graph<String,DefaultEdge>,String> data;
+    HashMap<String,String> data;
     //Constructor: make database by making new HashMap
 
     public database() {
 
-        data = new HashMap<Graph<String,DefaultEdge>,String>();
+        data = new HashMap<String,String>();
 
     }
-
-    //Constructor: make database by making new HashMap
-
 
     // JDBC driver name and database URL
 //    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -53,10 +50,6 @@ public class database {
     }
 
 
-    //Constructor: make database by making new HashMap
-
-
-
     //Function: Add molecule to database by reading in text file
     //Read first line (name) and store as value
     //Read all other lines and store as vector (to be used as key)
@@ -85,12 +78,13 @@ public class database {
             }
 
             //data.put(key2, value);
-            System.out.println(key2.toString());
+            //System.out.println(key2.toString());
 
 
             //System.out.println("Molecule " + value+ " added");
-            if (findCompound(value + ".txt") == false) { // only add when the molecule does not exist
-                data.put(key2, value);
+
+            if (findCompound(value + ".txt", true) == false) { // only add when the molecule does not exist
+                data.put(key2.toString(), value);
                 writeToFile(key2.toString() + " " + value);
                 System.out.println("Molecule " + value + " added");
             }
@@ -104,52 +98,56 @@ public class database {
         }
     }
 
-    //Function (WIP):
-    public boolean findCompound(String TextFile) {
-        String line = null;
-        Graph<String, DefaultEdge> key2 = new Multigraph<>(DefaultEdge.class);
-        Vector<String> key = new Vector<>();
-        String value = new String();
+
+    public boolean findCompound(String TextFile, boolean is_Hash) {
+        String linefind = null;
+        Graph<String, DefaultEdge> keyfind2 = new Multigraph<>(DefaultEdge.class);
+        Vector<String> keyfind = new Vector<>();
+        String valuefind = new String();
+        String isThere = null;
         int count = 0;
         try {
             BufferedReader read = new BufferedReader(new FileReader(TextFile));
-            while ((line = read.readLine())!= null) {
+            while ((linefind = read.readLine())!= null) {
                 if (count == 0) {
-                    value = line;
+                    valuefind = linefind;
                 } else if(count > 1){
-                    key.addElement(line + (count - 2));
-                    if(line.length() == 1){
-                        key2.addVertex(line + (count - 2));
+                    keyfind.addElement(linefind + (count - 2));
+                    if(linefind.length() == 1){
+                        keyfind2.addVertex(linefind + (count - 2));
                     }else{
-                        String[] edge = line.split(" ");
-                        key2.addEdge(key.get(Integer.parseInt(edge[0])),key.get(Integer.parseInt(edge[1])));
+                        String[] edge = linefind.split(" ");
+                        keyfind2.addEdge(keyfind.get(Integer.parseInt(edge[0])),keyfind.get(Integer.parseInt(edge[1])));
                     }
 
                 }
                 count += 1;
             }
 
-            value = data.get(key2);
-            if (value == null) {
-                //System.out.println("No molecule found");
+            if (data.get(keyfind2.toString().replaceAll("\\P{Print}","")) == null) {
+                if(!is_Hash) {
+                    System.out.println("No molecule found");
+                }
                 return false;
             } else {
-                //System.out.println("Molecule name: " + value);
+                System.out.println("Molecule name: " + valuefind);
                 return true;
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
+            return false;
         } catch (IOException ex) {
             System.out.println("IO");
+            return false;
         }
-        return false;
+
     }
 
     public void printDB(){
-        for (Graph name: data.keySet()){
+        for (String name: data.keySet()){
 
             String key =name.toString();
-            String value = data.get(name).toString();
+            String value = data.get(name);
             System.out.println(key + " " + value);
 
 
