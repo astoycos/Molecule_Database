@@ -78,3 +78,42 @@ org.jgrapht
 
 ```
 
+md print
+
+```
+
+
+13. There are example molecule text files for adding and searching in the moleculeDB folder. To add a molecule, type in the bottom command terminal:
+
+```
+
+md -addMolecule [text file name]
+
+```
+
+An example for adding water to the database:
+
+```
+
+md -addMolecule water.txt
+
+```
+
+
+14. To search for a molecule in the database, type in the bottom command terminal:
+
+```
+
+md -findMolecule [text]
+
+```
+
+An example for searching for water in the database:
+
+```
+
+md -findMolecule water.txt
+
+```
+
+
