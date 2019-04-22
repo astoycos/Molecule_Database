@@ -7,14 +7,15 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Welcome to MoleculeDB");
-        System.out.println("This program stores chemical molecules, enter a command to continue \n");
-        System.out.println("Commands should be md followed by either -addMolecule fileName, -findMolecule fileName, -findSubgraph fileName, -findMostsimilar fileName, or gui ");
 
+        String database_filename = "hashmap.ser";
         isodatabase DB = new isodatabase();
 
+        System.out.println("Loading database. This can take 10-15 seconds");
         // This opens the database. Preference is for local database. If non exists, pulls from remote starter
-        DB.openDB();
-
+        DB.openDB(database_filename);
+        System.out.println("\nStarting test cases:");
+        System.out.println("Adding compound function. Find compound a part of each add to prevent duplicates");
         long startTime = System.nanoTime();
         // These compounds are to show functionality
         DB.addCompound("water.txt");
@@ -39,22 +40,27 @@ public class Main {
         System.out.print("There are " + number_of_entries + " compounds in database"
                 +"\n"+"The database, hashmap.ser, is " + size_of_db_file + " bytes\n\n");
 
+        System.out.println("Finding compound function");
         DB.findCompound("water.txt",false);
         DB.findCompound("water2.txt",false);
         DB.findCompound("Sulfuric_Acid.txt",false);
 
-        DB.findSubgraph("CH.txt");
+        System.out.println("\nSubgraph search function");
+        DB.findSubgraph("Mastoparan.txt");
+        System.out.println("\nFind most similar search function");
         DB.findMostSimilar("isomeric2.txt");
 
         //DB.printDB(); // To be used for debugging
 
+        System.out.println("\nThis program stores chemical molecules, enter a command to continue");
+        System.out.println("Commands should be md followed by either exit, -addMolecule fileName, -findMolecule fileName, -findSubgraph fileName, -findMostsimilar fileName, or gui ");
         Scanner scanner = new Scanner(System.in);
 
         String input;
 
         input = scanner.nextLine();
         try {
-            while (!input.isEmpty()) {
+            while (input != "exit") {
                 //System.out.println(input);
                 String[] input_splitted = input.trim().split("\\s+");
                 if (input_splitted[1].equals("-addMolecule")) {
@@ -67,6 +73,10 @@ public class Main {
                     DB.findMostSimilar(input_splitted[2]);
                 } else if (input_splitted[1].equals("gui")){
                     gui myGUI = new gui(DB);
+                } else if (input_splitted[1].equals("exit")){
+                    System.out.println("exiting...");
+                    DB.saveDB(database_filename);
+                    return;
                 }
 
                 input = scanner.nextLine();
@@ -74,10 +84,8 @@ public class Main {
             }
         }catch(Exception Ex){
             System.out.println("Invalid Input Format");
-            DB.saveDB();
-            return;
         }
-        DB.saveDB();
+        DB.saveDB(database_filename);
     }
 
 }

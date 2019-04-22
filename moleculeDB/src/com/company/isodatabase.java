@@ -22,9 +22,10 @@ public class isodatabase {
         data = new HashMap<>();
     }
 
-        public static void saveDB() {
+        public static void saveDB(String database_file) {
+        System.out.println("Starting save. This can take a few seconds");
         try {
-            FileOutputStream filestream = new FileOutputStream("hashmap.ser");
+            FileOutputStream filestream = new FileOutputStream(database_file);
             ObjectOutputStream outputstream = new ObjectOutputStream(filestream);
             outputstream.writeObject(data);
             outputstream.close();
@@ -35,10 +36,10 @@ public class isodatabase {
         }
     }
 
-    public static void openDB() {
+    public static void openDB(String database_file) {
         // first tries to open a local database
         try {
-            FileInputStream filestream = new FileInputStream("hashmap.ser");
+            FileInputStream filestream = new FileInputStream(database_file);
             ObjectInputStream inputstream = new ObjectInputStream(filestream);
             data = (HashMap) inputstream.readObject();
         } catch (IOException ex) {
@@ -51,7 +52,7 @@ public class isodatabase {
             ObjectInputStream inputstream = new ObjectInputStream(conn.getInputStream());
             data = (HashMap) inputstream.readObject();
 
-            saveDB();
+            saveDB(database_file);
             } catch (IOException ex3){System.out.println("Remote inaccesible");
             } catch (ClassNotFoundException ex4) {
                 ex4.printStackTrace();
@@ -340,6 +341,7 @@ public class isodatabase {
                         }
                     }
                 }
+                bonds_and_elements = false;
             }
 
 
@@ -549,7 +551,7 @@ public class isodatabase {
     public int[] database_statistics(){
         int statistics[] = new int[2];
         int number_of_entries;
-        number_of_entries = data.size();
+        number_of_entries = data.values().size();
 
         int size_of_db_file;
         File file_for_sizing = new File("hashmap.ser");
