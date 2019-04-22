@@ -6,10 +6,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.*;
@@ -535,7 +532,7 @@ public class isodatabase {
         System.out.println(data.keySet());
     }
 
-    public static class molecularProperty {
+    public static class molecularProperty implements Serializable {
         HashMap<String, Integer> molecularFormula;
         int numEdges;
         int numAtoms;

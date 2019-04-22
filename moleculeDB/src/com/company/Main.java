@@ -17,6 +17,8 @@ public class Main {
 
         isodatabase DB = new isodatabase();
 
+        DB.openDB();
+
         DB.addCompound("water.txt");
         DB.addCompound("ammonia.txt");
         DB.addCompound("glucose.txt");
@@ -61,8 +63,10 @@ public class Main {
             }
         }catch(Exception Ex){
             System.out.println("Invalid Input Format");
+            DB.saveDB();
             return;
         }
-
+        DB.saveDB();
     }
+
 }
