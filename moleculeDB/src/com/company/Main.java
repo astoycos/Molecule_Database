@@ -1,24 +1,21 @@
 package com.company;
 
-//import com.company.database;
-
 import java.util.Scanner;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        // write your code here
-        //try {
-        //String filename = "water.txt";
         System.out.println("Welcome to MoleculeDB");
         System.out.println("This program stores chemical molecules, enter a command to continue \n");
-        System.out.println("Commands should be md followed by either -addMolecule fileName, -findMolecule fileName, -findSubgraph fileName, -findMostsimilar fileName ");
+        System.out.println("Commands should be md followed by either -addMolecule fileName, -findMolecule fileName, -findSubgraph fileName, -findMostsimilar fileName, or gui ");
 
         isodatabase DB = new isodatabase();
 
+        // This opens the database. Preference is for local database. If non exists, pulls from remote starter
         DB.openDB();
 
+        // These compounds are to show functionality
         DB.addCompound("water.txt");
         DB.addCompound("ammonia.txt");
         DB.addCompound("glucose.txt");
@@ -33,7 +30,7 @@ public class Main {
         DB.findSubgraph("CH.txt");
         DB.findMostSimilar("isomeric2.txt");
 
-        //DB.printDB();
+        //DB.printDB(); // To be used for debugging
 
         Scanner scanner = new Scanner(System.in);
 
@@ -52,11 +49,9 @@ public class Main {
                     DB.findSubgraph(input_splitted[2]);
                 } else if (input_splitted[1].equals("-findMostsimilar")){
                     DB.findMostSimilar(input_splitted[2]);
+                } else if (input_splitted[1].equals("gui")){
+                    gui myGUI = new gui(DB);
                 }
-
-                // DB.addCompound("carbon_dioxide.txt");
-                // DB.findCompound("acetylene.txt");
-                // DB.findCompound("water.txt");
 
                 input = scanner.nextLine();
 

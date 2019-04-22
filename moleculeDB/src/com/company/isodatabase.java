@@ -7,9 +7,13 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.*;
+
+// Class for creating a Hashmap capable of storing molecules and searching, efficiently, for isomorphisms
 
 public class isodatabase {
     static HashMap<molecularProperty,HashMap<Graph<String, DefaultEdge>,String>> data;
@@ -25,19 +29,34 @@ public class isodatabase {
             outputstream.writeObject(data);
             outputstream.close();
             filestream.close();
-            System.out.printf("HashMap serialized");
+            System.out.println("HashMap serialized");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
     public static void openDB() {
+        // first tries to open a local database
         try {
             FileInputStream filestream = new FileInputStream("hashmap.ser");
             ObjectInputStream inputstream = new ObjectInputStream(filestream);
             data = (HashMap) inputstream.readObject();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("Creating new local database from remote");
+            // If no local database exists, pulls from remote to start new local database
+            try {
+            URL url = new URL("http://73.238.218.108/hashmap.ser");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            ObjectInputStream inputstream = new ObjectInputStream(conn.getInputStream());
+            data = (HashMap) inputstream.readObject();
+
+            saveDB();
+            } catch (IOException ex3){System.out.println("Remote inaccesible");
+            } catch (ClassNotFoundException ex4) {
+                ex4.printStackTrace();
+            }
+
         } catch (ClassNotFoundException ex2) {
             ex2.printStackTrace();
         }
@@ -158,7 +177,7 @@ public class isodatabase {
     }
 
 
-    public void findCompound(String TextFile, boolean is_Hash) {
+    public boolean findCompound(String TextFile, boolean is_Hash) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
@@ -203,7 +222,7 @@ public class isodatabase {
 
             Iterator it = data.keySet().iterator();
 
-            /*
+            /* Debugging Code
             for(molecularProperty name: data.keySet()) {
 
                 System.out.println(name.equals(mainKey));
@@ -213,7 +232,7 @@ public class isodatabase {
                 System.out.println(name.molecularFormula);
             }
 
-            /*
+            /* Debugging Code
             System.out.println("Formula is: ");
             System.out.println(formula);
 
@@ -231,14 +250,14 @@ public class isodatabase {
 
 
             if (data.get(mainKey) == null) {
-                System.out.println("Molecule not found");
-                //return null;
+                System.out.println("NOT FOUND");
+                return false;
             } else {
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
                     equal_graphs one = new equal_graphs(key2, possibleMatch);
                     if(one.check_SG()){
                         System.out.println("Graph " + TextFile + " found in: " + data.get(mainKey).get(possibleMatch));
-                        return;
+                        return true;
                     }
 
                 }
@@ -247,11 +266,12 @@ public class isodatabase {
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
-            //return null;
+            return false;
         } catch (IOException ex) {
             System.out.println("IO");
-            //return null;
+            return false;
         }
+        return false;
     }
 
     public void findSubgraph(String Textfile) {
@@ -335,12 +355,10 @@ public class isodatabase {
             //return null;
         }
 
-
-
     }
 
 
-    public static void addCompound(String TextFile) {
+    public static boolean addCompound(String TextFile) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
@@ -383,7 +401,7 @@ public class isodatabase {
 
             if (data.get(mainKey) == null) {
 
-                /*
+                /* Debugging code
                 System.out.println("Molecule " + moleculeName + " added");
                 System.out.println("Main key is: ");
                 System.out.println(mainKey);
@@ -399,9 +417,9 @@ public class isodatabase {
 
                 data.put(mainKey,secondLayer);
 
-                return;
+                return true;
             } else {
-                /*
+                /* Debugging print code
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
                     if (backtrackSearch(possibleMatch, key2) == true) {
 
@@ -413,14 +431,14 @@ public class isodatabase {
                 data.get(mainKey).put(key2, moleculeName);
                 */
                 System.out.println("Molecule " + moleculeName + " already there");
-                return;
+                return false;
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
-            return;
+            return false;
         } catch (IOException ex) {
             System.out.println("IO");
-            return;
+            return false;
         }
 
     }
@@ -527,6 +545,12 @@ public class isodatabase {
         }
     }
     */
+    // A function for producing database statistics
+    public int database_statistics(){
+        int number_of_entries;
+        number_of_entries = data.size();
+        return number_of_entries;
+    }
 
     public void printkeys(){
         System.out.println(data.keySet());
