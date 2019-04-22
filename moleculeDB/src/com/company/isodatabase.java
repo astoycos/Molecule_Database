@@ -21,6 +21,32 @@ public class isodatabase {
         data = new HashMap<>();
     }
 
+        public static void saveDB() {
+        try {
+            FileOutputStream filestream = new FileOutputStream("hashmap.ser");
+            ObjectOutputStream outputstream = new ObjectOutputStream(filestream);
+            outputstream.writeObject(data);
+            outputstream.close();
+            filestream.close();
+            System.out.printf("HashMap serialized");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void openDB() {
+        try {
+            FileInputStream filestream = new FileInputStream("hashmap.ser");
+            ObjectInputStream inputstream = new ObjectInputStream(filestream);
+            data = (HashMap) inputstream.readObject();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex2) {
+            ex2.printStackTrace();
+        }
+
+    }
+
     //Class to use backtracking to check for isomorphism
 
     class equal_graphs {
