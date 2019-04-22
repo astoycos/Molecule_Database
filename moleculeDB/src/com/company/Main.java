@@ -15,14 +15,21 @@ public class Main {
         // This opens the database. Preference is for local database. If non exists, pulls from remote starter
         DB.openDB();
 
-
+        long startTime = System.nanoTime();
         // These compounds are to show functionality
         DB.addCompound("water.txt");
         DB.addCompound("ammonia.txt");
         DB.addCompound("glucose.txt");
         DB.addCompound("isomeric.txt");
         DB.addCompound("acetylene.txt");
+        DB.addCompound("sulfuric_acid.txt");
+        DB.addCompound("water2.txt");
+        DB.addCompound("carbon_dioxide.txt");
+        DB.addCompound("glucose.txt");
+        DB.addCompound("sodium_chloride.txt");
+        long timeEnd = System.nanoTime();
 
+        System.out.println("10 operations (Add Compounds) took "+((timeEnd-startTime)/1000000)+ " milliseconds");
 
         DB.findCompound("water.txt",false);
         DB.findCompound("water2.txt",false);
