@@ -84,10 +84,13 @@ public class gui extends JFrame implements ActionListener {
         }
         else if (e.getSource() == button_statistics) {
             int number_of_entries;
+            int size_of_db_file;
             // Shows how many compounds are in the database
-            number_of_entries = DB.database_statistics();
+            number_of_entries = DB.database_statistics()[0];
+            size_of_db_file = DB.database_statistics()[1];
             try {
-                JOptionPane.showMessageDialog(null, "There are " + number_of_entries + " compounds in database", "Statistics", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "There are " + number_of_entries + " compounds in database"
+                        +"\n"+"The database hashmap.ser is " + size_of_db_file + " bytes\n", "Statistics", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

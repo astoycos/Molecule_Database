@@ -1,7 +1,7 @@
 package com.company;
 
 import java.util.Scanner;
-
+import java.io.*;
 
 public class Main {
 
@@ -14,6 +14,7 @@ public class Main {
 
         // This opens the database. Preference is for local database. If non exists, pulls from remote starter
         DB.openDB();
+
 
         // These compounds are to show functionality
         DB.addCompound("water.txt");

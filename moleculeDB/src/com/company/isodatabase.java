@@ -546,10 +546,18 @@ public class isodatabase {
     }
     */
     // A function for producing database statistics
-    public int database_statistics(){
+    public int[] database_statistics(){
+        int statistics[] = new int[2];
         int number_of_entries;
         number_of_entries = data.size();
-        return number_of_entries;
+
+        int size_of_db_file;
+        File file_for_sizing = new File("hashmap.ser");
+        size_of_db_file = (int) file_for_sizing.length();
+
+        statistics[0] = number_of_entries;
+        statistics[1] = size_of_db_file;
+        return statistics;
     }
 
     public void printkeys(){
