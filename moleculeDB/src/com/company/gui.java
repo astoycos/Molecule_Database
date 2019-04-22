@@ -90,7 +90,7 @@ public class gui extends JFrame implements ActionListener {
             size_of_db_file = DB.database_statistics()[1];
             try {
                 JOptionPane.showMessageDialog(null, "There are " + number_of_entries + " compounds in database"
-                        +"\n"+"The database hashmap.ser is " + size_of_db_file + " bytes\n", "Statistics", JOptionPane.INFORMATION_MESSAGE);
+                        +"\n"+"The database, hashmap.ser, is " + size_of_db_file + " bytes\n", "Statistics", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

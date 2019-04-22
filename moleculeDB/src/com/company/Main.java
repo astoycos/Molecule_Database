@@ -29,7 +29,15 @@ public class Main {
         DB.addCompound("sodium_chloride.txt");
         long timeEnd = System.nanoTime();
 
+        System.out.println("\nTest Statistics");
         System.out.println("10 operations (Add Compounds) took "+((timeEnd-startTime)/1000000)+ " milliseconds");
+        int number_of_entries;
+        int size_of_db_file;
+        // Shows how many compounds are in the database
+        number_of_entries = DB.database_statistics()[0];
+        size_of_db_file = DB.database_statistics()[1];
+        System.out.print("There are " + number_of_entries + " compounds in database"
+                +"\n"+"The database, hashmap.ser, is " + size_of_db_file + " bytes\n\n");
 
         DB.findCompound("water.txt",false);
         DB.findCompound("water2.txt",false);
