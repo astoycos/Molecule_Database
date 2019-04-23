@@ -271,6 +271,8 @@ public class isodatabase {
         } catch (IOException ex) {
             System.out.println("IO");
             return false;
+        } catch (Exception ex2) {
+            System.out.print("Incorrect format");
         }
         return false;
     }
@@ -352,9 +354,11 @@ public class isodatabase {
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
             //return null;
-        } catch (IOException ex) {
+        } catch (IOException ex2) {
             System.out.println("IO");
             //return null;
+        } catch (Exception ex3) {
+            System.out.print("Incorrect format");
         }
 
     }
@@ -440,6 +444,9 @@ public class isodatabase {
             return false;
         } catch (IOException ex) {
             System.out.println("IO");
+            return false;
+        } catch (Exception ex2) {
+            System.out.print("Incorrect format");
             return false;
         }
 
