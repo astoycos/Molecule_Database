@@ -7,9 +7,13 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.*;
+
+// Class for creating a Hashmap capable of storing molecules and searching, efficiently, for isomorphisms
 
 public class isodatabase {
     static HashMap<molecularProperty,HashMap<Graph<String, DefaultEdge>,String>> data;
@@ -18,26 +22,42 @@ public class isodatabase {
         data = new HashMap<>();
     }
 
-        public static void saveDB() {
+        public static void saveDB(String database_file) {
+        System.out.println("Starting save. This can take a few seconds");
         try {
-            FileOutputStream filestream = new FileOutputStream("hashmap.ser");
+            FileOutputStream filestream = new FileOutputStream(database_file);
             ObjectOutputStream outputstream = new ObjectOutputStream(filestream);
             outputstream.writeObject(data);
             outputstream.close();
             filestream.close();
-            System.out.printf("HashMap serialized");
+            System.out.println("HashMap serialized");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void openDB() {
+    public static void openDB(String database_file) {
+        // first tries to open a local database
         try {
-            FileInputStream filestream = new FileInputStream("hashmap.ser");
+            FileInputStream filestream = new FileInputStream(database_file);
             ObjectInputStream inputstream = new ObjectInputStream(filestream);
             data = (HashMap) inputstream.readObject();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("Creating new local database from remote");
+            // If no local database exists, pulls from remote to start new local database
+            try {
+            URL url = new URL("http://73.238.218.108/hashmap.ser");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            ObjectInputStream inputstream = new ObjectInputStream(conn.getInputStream());
+            data = (HashMap) inputstream.readObject();
+
+            saveDB(database_file);
+            } catch (IOException ex3){System.out.println("Remote inaccesible");
+            } catch (ClassNotFoundException ex4) {
+                ex4.printStackTrace();
+            }
+
         } catch (ClassNotFoundException ex2) {
             ex2.printStackTrace();
         }
@@ -219,9 +239,11 @@ public class isodatabase {
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
 
+            return false;
         } catch (IOException ex) {
             System.out.println("IO");
 
+            return false;
         }
         return false;
     }
@@ -312,9 +334,8 @@ public class isodatabase {
 
     }
 
-    int addcount = 0;
 
-    public void addCompound(String TextFile) {
+    public boolean addCompound(String TextFile) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
@@ -358,7 +379,7 @@ public class isodatabase {
 
             if (findCompound(TextFile)) {
 
-                /*
+                /* Debugging code
                 System.out.println("Molecule " + moleculeName + " added");
                 System.out.println("Main key is: ");
                 System.out.println(mainKey);
@@ -374,7 +395,7 @@ public class isodatabase {
                 System.out.println("Molecule " + moleculeName + " already there");
                 //data.put(mainKey,secondLayer);
 
-                return;
+                return false;
             } else {
                 /*
 
@@ -392,15 +413,15 @@ public class isodatabase {
                 System.out.println("Molecule " + moleculeName + " added");
                 secondLayer.put(key2,moleculeName);
                 data.put(mainKey,secondLayer);
-                addcount++;
-                return;
+                //addcount++;
+                return true;
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
-            return;
+            return false;
         } catch (IOException ex) {
             System.out.println("IO");
-            return;
+            return false;
         }
 
     }
@@ -507,6 +528,20 @@ public class isodatabase {
         }
     }
     */
+    // A function for producing database statistics
+    public int[] database_statistics(){
+        int statistics[] = new int[2];
+        int number_of_entries;
+        number_of_entries = data.values().size();
+
+        int size_of_db_file;
+        File file_for_sizing = new File("hashmap.ser");
+        size_of_db_file = (int) file_for_sizing.length();
+
+        statistics[0] = number_of_entries;
+        statistics[1] = size_of_db_file;
+        return statistics;
+    }
 
     public void printkeys(){
         System.out.println(data.keySet());
