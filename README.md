@@ -1,119 +1,90 @@
 # EC504 MoleculeDB
+# Final Project Implementation 
+# MoleculeDB
+# Team 8
+The scope of our project was to build a molecule database. We had to write algorithms to add molecular compounds, as well as search via different molecule attributes. The database and associated functions currently account for isomorphic cases, accommodate 10 operations per second on a 10,000 molecule database, and use an integrated command-line-interface.
+## Group Members:
+* Matthew Hormis (mhomris@bu.edu)
+* Eric Li (ericli21@bu.edu)
+* David Payne (payneda@bu.edu)
+* Andrew Stoycos (astoycos@bu.edu)
+* Jacob Zweig (jpzweig@bu.edu)
+
+## Basic Functionality 
+### Overview
+We store our molecules in a Hashmap data structure, chosen for quick add and access support features. Each key within the Hashmap is stored using a multigraph with each key-value pair stored in the database through a built-in “put” function. We have a pre-compiled database of 10,000 molecules (gathered from ChemSpider) stored on a Raspberry Pi as a serialized file, that the user can pre populate the hashmap from. If the user would like to start with a different dataset, they have to option to start from a local directory. We have written Java functions to add compounds, search for compounds, and perform a subgraph search (revealing which compounds contain a specific subgraph, used as an input parameter in the function). A user has the ability to interact with the database via a command-line-interface or graphical user interface (GUI).
+Solving Isomorphism 
+One of the hardest challenges in this project was solving graph isomorphism, when searching for molecules within our database.  Graph isomorphism occurs when a given Graph G1 has a one to one mapping of nodes to another Graph G2, i.e in our case when molecules have the same graph structure even then their text representation is different 
+
+
+
+## Additional Feature Implementation:
+### Develop a stand-alone Graphical User Interface that provides molecular entry and search capabilities, database statistics, and also displays molecules in some reasonable graphic format.
+The GUI is able to be called with the command ‘md gui.’ From there, the GUI provides access to three functions via buttons: to find a molecule, to add a molecule, and to see database statistics. For find and add, clicking those buttons opens up dialogs to select the relevant file from a user’s file system. The results of each action are then displayed in a confirmation box. Note: The GUI does not display molecules.
+Key Decisions Made:
+Swing framework - Chose to use ‘Swing’ due to prevalence of documentation and simplicity. The big downside considered was its aesthetics
+No unique functions or data structures - The GUI calls functions, it does not have any algorithms unique to itself as that was considered to be wasteful and unnecessary  
+### Run a server for your database than can be accessed through some reasonable interface over a socket port.
+The MoleculeDB program, using a URLconnection socket, is able to access the database that is hosted on a raspberry pi based server through a port that is forwarded out of that local area network. The program has a preference for a local database and does all updating to a local copy
+Key Decisions Made:
+Uni-directional server access - the choice was made to make the server database read-only for two reasons. One, under the alternative of a read-write server, that would require version and collaboration-control to deal with simultaneous access, adding, or deleting by multiple users. That can be a very frustrating experience as anyone who’s dealt with collaborators they don’t know on a Google Docs or FosWiki can attest. Second, we wanted to ensure that the program could be run offline, once again, for convenience 
+ Storage as .ser file - Given the complexity of the hashmap that we were using to get efficiency in searches, it would have been inefficient to translate that hashmap into text or a spreadsheet. We therefore chose to store the data using Java’s serializable file type as that is designed to store complicated data structures efficiently. The trade-off is that .ser files are not human-readable but a user can just open the program to search and get back a human readable name. 
+### Download 1,000 known compounds from an existing database (e.g., [http://www.chemspider.com/AboutServices.aspx?][ChemSpider]]) into your molecular database.
+Using the PubChem API and creating an HttpURLConnection object, we pulled the data in a JSON format by iterating through a for loop, increasing the “ID” of the call by one each time until reaching 1,000 compounds.
+### Ability to search for the most similar molecule to a given molecule, under some reasonable graph similarity metric.
+There are two main cases when determining molecule similarity (hashmaps and multigraphs are used):
+The first case is if the input-molecule has the same chemical formula as a pre-existing molecule in the database, we enter the second layer of the hashmap and see if it also contains the same structure.
+If so, we return the identical structure as found in the second layer of the hashmap.
+If not, we return the first structure in the second layer of the hashmap, as this will represent the most similar chemical structure of the input-molecule.
+The second case is if the input-molecule has a different chemical formula than any pre-existing molecules in the database, we see if there exists a compound with the same atoms as the input molecule.
+If so, we return an arbitrary structure in the second layer of the hashmap, as this would be the most similar to the input-molecule.
+If not, we do not declare any molecules as similar, as there would be a large percentage of pre-existing molecules as candidates for the most similar to the input-molecule.
+### Implement subgraph search - finding all molecules that contain a subgraph provided.
+for each feature implemented, provide a description of how it was implemented with an emphasis on data structures and algorithms used.
+### The following additional features have been removed from our Midterm Status Report:
+#### Develop a web page and corresponding server-side executable for accessing the database.
+Rationale for removal: Attempted to get web page but was unable to complete it due to inability to resolve the hooks from the webpage into the java program. Left the code in the folder to show work completed but did not integrate it into the program (using servlets and JSP).
+Initially started with using Vaadin which is an open source Java framework for web development, but were experiencing problems with an upload feature.
+#### Develop an Android client for your database
+Rationale for removal: Given inability to get the web page to interact, we removed this feature as well since it would have relied upon solving the same problem
+#### Implement approximate subgraph search
+Rationale for removal: Ultimately determined that this was more complex than other features and when we were triaging features given limited time, we removed this feature. 
+
+## References: 
+* Kružel, Karol. “Effective Algorithms for Searching of Identical Molecules and Their Application.” MASARYK UNIVERSITY, 2008, pp. 8–11.
+* Fu, Lixin, and Shruthi Chandra. “OPTIMIZED BACKTRACKING FOR SUBGRAPH ISOMORPHISM.” International Journal of Database Management Systems ( IJDMS ), Dec. 2012.
+* *PubChem citation*
+
+## Code:
+All complete, working Java code used in your implementation.
+All data needed by your project to run (or a simple, publicly accessible link thereto).
+All testing code utilized to observe the correctness of your code.
+
+## Work Breakdown
+* Eric Li:
+
+* David Payne:
+	- GUI - Built graphical user interface (GUI) and linked it with function calls addMolecule, findMolecule, and databaseStatistics. Wrote the database statistics function in isodatabase
+	- Remote server - Set up a remote server for the database that can be accessed via port forwarding. As part of this, wrote logic in isodatabase that prioritizes a local database but will fetch the remote database stored on the RPi as a starter database
+	- Wrote test cases for main and put in formatting for test cases
+* Andrew Stoycos: 
+* Jacob Zweig: 
+	- Worked on setting up a web-app to add and search for molecules (not implemented in final program)
+    - Duplicate-handling in addMolecule()
+    - Assisted in findCompound() searching by structure
+* Matthew Hormis: 
+	- Worked on setting up a web-app to add and search for molecules (not implemented in final program)
+    - Assisted in findMostSimilar() when dealing with unknown molecules
+# Jira links
+
+You may link to your Jira project for material that you wish to remain private and accessible only to the course staff.
+# Screenshot of Output
+![alt text](output.png "Output Screenshot")
+# Screenshots of WebApp
+## Web App Interface
+![alt text](webappinterface.png "Web App Interface Screenshot")
+## Console Running WebApp with Tomcat
+![alt text](webapppom.png "Web App POM Screenshot")
 
-Group 8
-
-
-
-Group Members: Andrew Stoycos, Eric Li, David Payne, Matthew Hormis, Jacob Zweig
-
-
-
-## Prototype
-
-
-
-Our working prototype is a HashMap database with command line functionality. The main script will initialize the database, and will wait for the user to type an add or search function. For adding a molecule, the program will read a text file name (via command), and parse through the lines of the text files. Based on the format given on the requirements, the first line will be the molecule name, which is the value of the HashMap. The rest of the lines (until end-of-file) will be used to create a multigraph, which is the key of the HashMap. This key-value pair will be stored into the data structure through a built-in �put� function. For finding a molecule, we read through a command line given text file to create a multigraph (for now we are just using the same text files for add and find, so we will ignore the first line when reading in the file). The multigraph will used to search the HashMap through a built-in �get� function. If there is a value in the HashMap that corresponds to this multigraph, the program will output the name of the unknown molecule.
-
-
-
-
-## Getting Started
-
-
-
-1. Choose a location or create a folder to clone the repository. Open up a terminal and "cd" to your location. To clone, type in the terminal:
-
-
-```
-
-git clone https://agile.bu.edu/bitbucket/scm/ec504proj/group8.git
-
-```
-
-
-2. In another terminal tab, open the IntelliJ IDE but typing
-
-```
-
-IntelliJ
-
-```
-
-
-3. Select import project, and find the "moleculeDB" folder that was cloned to your computer. Please select moleculeDB folder, NOT the group8 folder. Press OK to continue.
-
-
-4. There's no need for any extra feature yet, so keep clicking next to continue. Please make sure you are using Java JDK 1.8.0.
-
-
-5. On the top right, go to File > Project Structure > Global Libraries. Click the green plus sign in the middle column > "From maven..." to add a new global library.
-
-
-6. In the search bar, type the following and press search (may take some seconds): 
-
-
-```
-
-org.jgrapht
-
-```
-
-
-7. Find and select "org.jgrapht:jgrapht-core:1.3.0" in the dropdown options and press OK to add.
-
-
-8. Repeat steps 5 - 7 again (same search), but look for and add "org.jgrapht:jgrapht-io:1.3.0". 
-
-
-9. On the bottom right of the project structure, press Apply and then OK.
-
-
-10. Build the project (Ctrl + F9).
-
-
-11. Look through the project directory on the left side of the IDE, and find the Main.java file. Right click this file and select 'Run Main.main()'. In the main script, water and ammonia files have already been added to the database. There was also a search for the water molecule. 
-
-
-12. To list out the molecules in the database, type in the bottom command terminal:
-
-```
-
-md print
-
-```
-
-
-13. There are example molecule text files for adding and searching in the moleculeDB folder. To add a molecule, type in the bottom command terminal:
-
-```
-
-md -addMolecule [text file name]
-
-```
-
-An example for adding water to the database:
-
-```
-
-md -addMolecule water.txt
-
-```
-
-
-14. To search for a molecule in the database, type in the bottom command terminal:
-
-```
-
-md -findMolecule [text]
-
-```
-
-An example for searching for water in the database:
-
-```
-
-md -findMolecule water.txt
-
-```
 
 
