@@ -191,11 +191,11 @@ public class isodatabase {
         try {
             BufferedReader read = new BufferedReader(new FileReader(TextFile));
             while ((linefind = read.readLine()) != null) {
-                if (count == 1) {
+                if (count == 0) {
                     numberAtoms = Integer.valueOf(linefind);
-                } else if (count >= 2){
+                } else if (count >= 1){
                     key.addElement(linefind + (count - 2));
-                    if (count > 0 & count <= numberAtoms + 1) {
+                    if (count > 1 & count <= numberAtoms + 1) {
 
                         key2.addVertex(linefind + (count - 2));
                         Integer currentCount = formula.get(linefind);
@@ -288,11 +288,11 @@ public class isodatabase {
         try {
             BufferedReader read = new BufferedReader(new FileReader(Textfile));
             while ((linefind = read.readLine()) != null) {
-                if (count == 1) {
+                if (count == 0) {
                     numberAtoms = Integer.valueOf(linefind);
-                } else if (count >= 2) {
+                } else if (count >= 1) {
                     key.addElement(linefind + (count - 2));
-                    if (count > 0 & count <= numberAtoms + 1) {
+                    if (count > 1 & count <= numberAtoms + 1) {
 
                         key2.addVertex(linefind + (count - 2));
                         Integer currentCount = formula.get(linefind);

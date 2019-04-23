@@ -59,32 +59,33 @@ public class Main {
         String input;
 
         input = scanner.nextLine();
-        try {
             while (input != "exit") {
-                //System.out.println(input);
-                String[] input_splitted = input.trim().split("\\s+");
-                if (input_splitted[1].equals("-addMolecule")) {
-                    DB.addCompound(input_splitted[2]);
-                } else if (input_splitted[1].equals("-findMolecule")) {
-                    DB.findCompound(input_splitted[2], false);
-                } else if (input_splitted[1].equals("-findSubgraph")) {
-                    DB.findSubgraph(input_splitted[2]);
-                } else if (input_splitted[1].equals("-findMostsimilar")){
-                    DB.findMostSimilar(input_splitted[2]);
-                } else if (input_splitted[1].equals("gui")){
-                    gui myGUI = new gui(DB);
-                } else if (input_splitted[1].equals("exit")){
-                    System.out.println("exiting...");
-                    DB.saveDB(database_filename);
-                    return;
+                try {
+                    //System.out.println(input);
+                    String[] input_splitted = input.trim().split("\\s+");
+                    if (input_splitted[1].equals("-addMolecule")) {
+                        DB.addCompound(input_splitted[2]);
+                    } else if (input_splitted[1].equals("-findMolecule")) {
+                        DB.findCompound(input_splitted[2], false);
+                    } else if (input_splitted[1].equals("-findSubgraph")) {
+                        DB.findSubgraph(input_splitted[2]);
+                    } else if (input_splitted[1].equals("-findMostsimilar")) {
+                        DB.findMostSimilar(input_splitted[2]);
+                    } else if (input_splitted[1].equals("gui")) {
+                        gui myGUI = new gui(DB);
+                    } else if (input_splitted[1].equals("exit")) {
+                        System.out.println("exiting...");
+                        DB.saveDB(database_filename);
+                        return;
+                    }
+                } catch(Exception Ex){
+                    System.out.println("Invalid Input Format");
                 }
 
                 input = scanner.nextLine();
 
             }
-        }catch(Exception Ex){
-            System.out.println("Invalid Input Format");
-        }
+
         DB.saveDB(database_filename);
     }
 
