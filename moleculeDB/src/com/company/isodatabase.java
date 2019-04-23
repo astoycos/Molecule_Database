@@ -16,12 +16,16 @@ import java.util.*;
 // Class for creating a Hashmap capable of storing molecules and searching, efficiently, for isomorphisms
 
 public class isodatabase {
+
+    //Main Database structure
     static HashMap<molecularProperty,HashMap<Graph<String, DefaultEdge>,String>> data;
 
+    //Default constructor for the main Database class
     public isodatabase() {
         data = new HashMap<>();
     }
 
+        //Member function to Serialize and save the database HashMap "data" structure to the hashmap.ser file
         public static void saveDB(String database_file) {
         System.out.println("Starting save. This can take a few seconds");
         try {
@@ -36,6 +40,9 @@ public class isodatabase {
         }
     }
 
+    //Member function to populate the database HashMap "data" from the serialized hashmap.ser file
+    //If there is no hashmap.ser file in the working directory the function pulls a pre-populated, with 10000 unique molecules,
+    //serialized version of the hashmap
     public static void openDB(String database_file) {
         // first tries to open a local database
         try {
@@ -65,15 +72,16 @@ public class isodatabase {
     }
 
     //Class to use backtracking to check for isomorphism
-
+    // Implements the algorithm described in the peer reviewed paper: Optimized Bactracking for SubGraph IsoMorphism
     class equal_graphs {
-
         boolean found;
         boolean eob;
+        //Vector used to map similar verticies across Graphs to eachother
         Vector<Pair<java.lang.Object, java.lang.Object>> Mapping;
         Graph<String, DefaultEdge> G;
         Graph<String, DefaultEdge> SG;
 
+        //Constructor
         public equal_graphs(Graph<String, DefaultEdge> SG2, Graph<String, DefaultEdge> G2){
             G = G2;
             SG = SG2;
@@ -82,15 +90,15 @@ public class isodatabase {
             Mapping = new Vector<>();
 
         }
-        public boolean check_SG() {
-            // boolean found = false;
 
+        //Top level function of recursion Tree
+        //Returns true if graph G contains or is equal to graph SG
+        public boolean check_SG() {
             Set verticesSG = SG.vertexSet();
             Set verticesG = G.vertexSet();
 
             Iterator A = verticesSG.iterator();
             Iterator B = verticesG.iterator();
-            //while(A.hasNext()){
             java.lang.Object U = A.next();
             while (B.hasNext()) {
                 java.lang.Object V = B.next();
@@ -105,11 +113,9 @@ public class isodatabase {
                 return false;
             }
             return false;
-
-            //}
-
         }
 
+        //Main Recursive function to Map "Equal" verticies to eachother between the two graphs
         boolean to_map(java.lang.Object U, java.lang.Object V) {
             boolean eob = false;
             if (Mapping.size() == SG.vertexSet().size()) { /// MAPPING IS FULL
@@ -139,6 +145,7 @@ public class isodatabase {
             return false;
         }
 
+        //Finds compatible neighbors of a a single compatible vertex in G and SG
         Vector<Pair<java.lang.Object, java.lang.Object>> get_equal_Nodes(java.lang.Object U, java.lang.Object V) {
 
             Vector<Pair<java.lang.Object, java.lang.Object>> out = new Vector<>();
@@ -166,6 +173,8 @@ public class isodatabase {
             return out;
         }
 
+        // helper function that returns if two verticies are equal
+        // Only returns true if they are the same element and the Degree of the SG vertex(U) is less than Degree of the G vertex(V)
         boolean equal_Nodes(java.lang.Object U, java.lang.Object V){
             if(U.toString().charAt(0) == V.toString().charAt(0)){
                 if(SG.degreeOf(U.toString()) <= G.degreeOf(V.toString())){
@@ -177,12 +186,16 @@ public class isodatabase {
         }
     }
 
-
+    //Memberfunction to find a Compound in the database if it is there
+    //Searches the database using an unknown molecular graph as the key
+    //Instansiates equal_graph subclass to decide weather Graph in data is equal or isomorphic to the graph being searched
     public boolean findCompound(String TextFile) {
+        //code to parse input textfile, this is the same for every member function
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
         int numberBonds = 0;
+        String moleculeName = null;
         HashMap<String, Integer> formula = new HashMap<>();
         Vector<String> key = new Vector<>();
         Graph<String, DefaultEdge> key2 = new Multigraph<>(DefaultEdge.class);
@@ -191,7 +204,19 @@ public class isodatabase {
         try {
             BufferedReader read = new BufferedReader(new FileReader(TextFile));
             while ((linefind = read.readLine()) != null) {
+              //Allows the user to search for a textfile reguardless of wether the molecule name is at the top of the file or not
+                if (count == 0) {
+                    try {
+                        numberAtoms = Integer.valueOf(linefind);
+                       //moleculeName = linefind;
+                        count++;
+                    }catch(Exception ex){
+                        moleculeName = linefind;
+                        //count++;
+                    }
+                }
                 if (count == 1) {
+
                     numberAtoms = Integer.valueOf(linefind);
                 } else if (count >= 2){
                     key.addElement(linefind + (count - 2));
@@ -215,14 +240,12 @@ public class isodatabase {
                 count++;
             }
 
-
-
-
+            //Creates mainkey that us used to prune branches before recursively comparing graphs with equal_graphs class
             molecularProperty mainKey = new molecularProperty(formula, numberBonds,numberAtoms);
 
             if (data.get(mainKey) == null) {
                 //System.out.println("Molecule not found");
-                //return null;
+                return false;
             } else {
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
                     equal_graphs one = new equal_graphs(key2, possibleMatch);
@@ -246,26 +269,41 @@ public class isodatabase {
             return false;
         } catch (Exception ex2) {
             System.out.print("Incorrect format");
+
         }
         return false;
     }
 
+    // Finds the molecules with the subgraph provided by Textfile
     public void findSubgraph(String Textfile) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
         int numberBonds = 0;
+        String moleculeName = null;
         HashMap<String, Integer> formula = new HashMap<>();
         Vector<String> key = new Vector<>();
         Graph<String, DefaultEdge> key2 = new Multigraph<>(DefaultEdge.class);
 
-        System.out.println("Searching for: " + Textfile);
+        //Read in the Textfile
+
         try {
             BufferedReader read = new BufferedReader(new FileReader(Textfile));
             while ((linefind = read.readLine()) != null) {
+                if (count == 0) {
+                    try {
+                        numberAtoms = Integer.valueOf(linefind);
+                        //moleculeName = linefind;
+                        count++;
+                    }catch(Exception ex){
+                        moleculeName = linefind;
+                        //count++;
+                    }
+                }
                 if (count == 1) {
+
                     numberAtoms = Integer.valueOf(linefind);
-                } else if (count >= 2) {
+                } else if (count >= 2){
                     key.addElement(linefind + (count - 2));
                     if (count > 0 & count <= numberAtoms + 1) {
 
@@ -292,13 +330,8 @@ public class isodatabase {
             Vector<molecularProperty> mustSearch = new Vector<>();
             boolean bonds_and_elements = false;
 
+            //Expands the possible graphs to compare Textfile too by looking at all the MolecularProperty Keys in data
             for(molecularProperty name: data.keySet()) {
-
-                //System.out.println(name.equals(mainKey));
-                //System.out.println(data.get(mainKey));
-                //System.out.println(data.get(name));
-                //System.out.println(name.numEdges);
-                //System.out.println(name.molecularFormula);
 
                 if(name.numEdges >= numberBonds && name.numAtoms >= numberAtoms) {
                     for (String element : formula.keySet()) {
@@ -307,9 +340,10 @@ public class isodatabase {
                         }else bonds_and_elements = false;
                     }
                 }
-
+                //If numEdges and numAtoms of G is greater than SG continue
                 if(bonds_and_elements){
                     for (Graph<String, DefaultEdge> possibleMatch: data.get(name).keySet()) {
+                        //If graphs are equal or isomorphic return G
                         equal_graphs one = new equal_graphs(key2, possibleMatch);
                         if(one.check_SG()){
                             System.out.println("Subgraph " + Textfile +" found in: " + data.get(name).get(possibleMatch));
@@ -338,7 +372,7 @@ public class isodatabase {
 
     }
 
-
+    //Member function to add a molecule to the database
     public boolean addCompound(String TextFile) {
         String linefind = null;
         int count = 0;
@@ -349,18 +383,29 @@ public class isodatabase {
         Vector<String> key = new Vector<>();
         Graph<String, DefaultEdge> key2 = new Multigraph<>(DefaultEdge.class);
 
+        //Textfile processing into a JgraphT Object
         try {
             BufferedReader read = new BufferedReader(new FileReader(TextFile));
             while ((linefind = read.readLine()) != null) {
                 if (count == 0) {
-                    moleculeName = linefind;
-                } else if (count == 1) {
+                    try {
+                        numberAtoms = Integer.valueOf(linefind);
+                        //moleculeName = linefind;
+                        count++;
+                    }catch(Exception ex){
+                        moleculeName = linefind;
+                        //count++;
+                    }
+                }
+                if (count == 1) {
+
                     numberAtoms = Integer.valueOf(linefind);
-                } else {
+                } else if (count >= 2){
                     key.addElement(linefind + (count - 2));
                     if (count > 0 & count <= numberAtoms + 1) {
-                        Integer currentCount = formula.get(linefind);
+
                         key2.addVertex(linefind + (count - 2));
+                        Integer currentCount = formula.get(linefind);
                         if (currentCount == null) {
                             formula.put(linefind, 1);
 
@@ -369,55 +414,25 @@ public class isodatabase {
                         }
                     } else {
                         String[] edge = linefind.split(" ");
-
                         key2.addEdge(key.get(Integer.parseInt(edge[0])), key.get(Integer.parseInt(edge[1])));
                         numberBonds++;
                     }
+
                 }
                 count++;
             }
+
             molecularProperty mainKey = new molecularProperty(formula, numberBonds,numberAtoms);
             HashMap<Graph<String, DefaultEdge>,String> secondLayer = new HashMap<>();
 
-
-
+            //Will not add molecule if it is already in the database
             if (findCompound(TextFile)) {
-
-                /* Debugging code
-                System.out.println("Molecule " + moleculeName + " added");
-                System.out.println("Main key is: ");
-                System.out.println(mainKey);
-
-                System.out.println("Edgeset is: ");
-                System.out.println(key2.edgeSet());
-                System.out.println("Vertexset is: ");
-                System.out.println(key2.vertexSet());
-                */
-                //System.out.println(formula);
-                //System.out.println("Molecule " + moleculeName + " added");
-                //secondLayer.put(key2,moleculeName);
                 System.out.println("Molecule " + moleculeName + " already there");
-                //data.put(mainKey,secondLayer);
-
                 return false;
             } else {
-                /*
-
-                for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
-                    if (backtrackSearch(possibleMatch, key2) == true) {
-
-                        System.out.println(data.get(mainKey).get(possibleMatch));
-                        return;
-                    }
-                }
-                System.out.println("Molecule " + moleculeName + " added");
-                data.get(mainKey).put(key2, moleculeName);
-                */
-                //System.out.println("Molecule " + moleculeName + " already there");
                 System.out.println("Molecule " + moleculeName + " added");
                 secondLayer.put(key2,moleculeName);
                 data.put(mainKey,secondLayer);
-                //addcount++;
                 return true;
             }
         } catch (FileNotFoundException ex) {
@@ -433,20 +448,37 @@ public class isodatabase {
 
     }
 
+    // Finds the most similar molecule to the one represented by TextFile
     public void findMostSimilar(String TextFile) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
         int numberBonds = 0;
+        String moleculeName = null;
         HashMap<String, Integer> formula = new HashMap<>();
         Vector<String> key = new Vector<>();
         Graph<String, DefaultEdge> key2 = new Multigraph<>(DefaultEdge.class);
+
+        System.out.println("Looking for Molecule most similar to: " + TextFile);
+
+
         try {
             BufferedReader read = new BufferedReader(new FileReader(TextFile));
             while ((linefind = read.readLine()) != null) {
+                if (count == 0) {
+                    try {
+                        numberAtoms = Integer.valueOf(linefind);
+                        //moleculeName = linefind;
+                        count++;
+                    }catch(Exception ex){
+                        moleculeName = linefind;
+                        //count++;
+                    }
+                }
                 if (count == 1) {
+
                     numberAtoms = Integer.valueOf(linefind);
-                } else if (count >= 2) {
+                } else if (count >= 2){
                     key.addElement(linefind + (count - 2));
                     if (count > 0 & count <= numberAtoms + 1) {
 
@@ -467,12 +499,17 @@ public class isodatabase {
                 }
                 count++;
             }
+
+            //There are 4 cases to finding the most similar molecule
             molecularProperty mainKey = new molecularProperty(formula, numberBonds,numberAtoms);
             molecularProperty mostSimilarMainKey = new molecularProperty();
             boolean atomFlag = false;
             int totalAtomDifferential = Integer.MAX_VALUE;
             int totalBondDifferential;
+            //If the mainKey is not found (chemical formula is not in the database), we look for through the database for molecules containing with the same exact elements
             if (data.get(mainKey) == null) {
+                // If there is a molecule with the exact same elements, we total up the amount of atoms and compare it to the amount of atoms in the input molecule
+                // We look for the molecule which the number of atoms closest to the input molecule
                 for (molecularProperty possibleSimilar : data.keySet()) {
                     if (possibleSimilar.molecularFormula.keySet().equals(formula.keySet())) {
                         int totalAtoms = 0;
@@ -489,18 +526,20 @@ public class isodatabase {
                             atomFlag = true;
                         }
                     }
-                    //subgraph search?
                 }
+                // Case 1: Print the most similar molecule found based on number of atoms and exact elements
+                // If there is multiple molecules with this criteria, we arbitrarily pick a molecule from this set
                 if (atomFlag == true) {
                     for (String mostSimilarMolecule : data.get(mostSimilarMainKey).values()) {
                         System.out.println("Similar molecule found: " + mostSimilarMolecule);
                         return;
                     }
                 }
+                // Case 2: There is no molecule that has the exact elements of the input molecule, so there is no similar molecule
                 System.out.println("Similar molecule not found");
                 return;
-                //return null;
             } else {
+                // Case 3: There is a chemical formula in database, and we do a graph isomorphism test until we find the exact molecule
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
                     equal_graphs one = new equal_graphs(key2, possibleMatch);
                     if (one.check_SG()) {
@@ -508,6 +547,8 @@ public class isodatabase {
                         return;
                     }
                 }
+                // Case 4: There is a chemical formula in database, but the exact molecule isn't detected.
+                // We then arbitrarily pick a molecule from the set
                 for (String mostSimilarMolecule : data.get(mostSimilarMainKey).values()) {
                     System.out.println("Similar molecule found: " + mostSimilarMolecule);
                     return;
@@ -523,18 +564,6 @@ public class isodatabase {
 
     }
 
-    /*
-    public void printDB(){
-        for (String name: data.keySet()){
-
-            String key =name.toString();
-            String value = data.get(name);
-            System.out.println(key + " " + value);
-
-
-        }
-    }
-    */
     // A function for producing database statistics
     public int[] database_statistics(){
         int statistics[] = new int[2];
@@ -550,16 +579,13 @@ public class isodatabase {
         return statistics;
     }
 
-    public void printkeys(){
-        System.out.println(data.keySet());
-    }
-
+    //Custom Class to assist in the branch pruning of recursive call in equal_graphs
     public static class molecularProperty implements Serializable {
         HashMap<String, Integer> molecularFormula;
         int numEdges;
         int numAtoms;
-//        int numRepeats;
 
+        //constructor
         public molecularProperty() {
             molecularFormula = new HashMap<>();
             numEdges = 0;
@@ -571,6 +597,7 @@ public class isodatabase {
             numAtoms = inputAtoms;
         }
 
+        //Since we are using molecularProperty as hashmap data's key we have to overwrite the equals fcn and the hashcode function to ensure it is hashing properly
         @Override
         public boolean equals(Object b){
             if(b == null) return false;

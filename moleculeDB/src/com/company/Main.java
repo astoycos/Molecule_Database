@@ -30,6 +30,9 @@ public class Main {
         DB.addCompound("sodium_chloride.txt");
         long timeEnd = System.nanoTime();
 
+        dataCollector pulltest = new dataCollector();
+        pulltest.getMolecule(8);
+
         System.out.println("\nTest Statistics");
         System.out.println("10 operations (Add Compounds) took "+((timeEnd-startTime)/1000000)+ " milliseconds");
         int number_of_entries;
@@ -43,7 +46,7 @@ public class Main {
         System.out.println("Finding compound function");
         DB.findCompound("water.txt");
         DB.findCompound("water2.txt");
-        DB.findCompound("Sulfuric_Acid.txt");
+        DB.findCompound("sulfuric_acid.txt");
 
         System.out.println("\nSubgraph search function");
         DB.findSubgraph("Mastoparan.txt");
@@ -73,6 +76,7 @@ public class Main {
                         DB.findMostSimilar(input_splitted[2]);
                     } else if (input_splitted[1].equals("gui")) {
                         gui myGUI = new gui(DB);
+                        DB.saveDB(database_filename);
                     } else if (input_splitted[1].equals("exit")) {
                         System.out.println("exiting...");
                         DB.saveDB(database_filename);
