@@ -90,8 +90,8 @@ All testing code utilized to observe the correctness of your code.
 	- Worked on setting up a web-app to add and search for molecules (not implemented in final program)
     - Assisted in findMostSimilar() when dealing with unknown molecules
 # Jira links
-Jira: https://agile.bu.edu/jira/projects/GROUP8/summary
-Crucible: https://agile.bu.edu/crucible/cru/GROUP8-5
+* Jira: https://agile.bu.edu/jira/projects/GROUP8/summary
+* Crucible: https://agile.bu.edu/crucible/cru/GROUP8-5
 # Screenshot of Output
 ![alt text](output.png "Output Screenshot")
 # Screenshots of WebApp
