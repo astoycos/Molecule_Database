@@ -158,7 +158,7 @@ public class isodatabase {
     }
 
 
-    public void findCompound(String TextFile, boolean is_Hash) {
+    public boolean findCompound(String TextFile) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
@@ -200,58 +200,30 @@ public class isodatabase {
 
             molecularProperty mainKey = new molecularProperty(formula, numberBonds,numberAtoms);
 
-
-            Iterator it = data.keySet().iterator();
-
-            /*
-            for(molecularProperty name: data.keySet()) {
-
-                System.out.println(name.equals(mainKey));
-                System.out.println(data.get(mainKey));
-                System.out.println(data.get(name));
-                System.out.println(name.numEdges);
-                System.out.println(name.molecularFormula);
-            }
-
-            /*
-            System.out.println("Formula is: ");
-            System.out.println(formula);
-
-            System.out.println("numbonds is: ");
-            System.out.println(numberBonds);
-
-            System.out.println("Main key is: ");
-            System.out.println(mainKey);
-
-            System.out.println("Edgeset is: ");
-            System.out.println(key2.edgeSet());
-            System.out.println("Vertexset is: ");
-            System.out.println(key2.vertexSet());
-            */
-
-
             if (data.get(mainKey) == null) {
-                System.out.println("Molecule not found");
+                //System.out.println("Molecule not found");
                 //return null;
             } else {
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
                     equal_graphs one = new equal_graphs(key2, possibleMatch);
                     if(one.check_SG()){
                         System.out.println("Graph " + TextFile + " found in: " + data.get(mainKey).get(possibleMatch));
-                        return;
+                        return true;
                     }
 
                 }
-                System.out.println("Graph " + TextFile + " not found in MoleculeDB ");
+                //System.out.println("Graph " + TextFile + " not found in MoleculeDB ");
+                return false;
 
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
-            //return null;
+
         } catch (IOException ex) {
             System.out.println("IO");
-            //return null;
+
         }
+        return false;
     }
 
     public void findSubgraph(String Textfile) {
@@ -320,6 +292,7 @@ public class isodatabase {
                         }
                     }
                 }
+                bonds_and_elements = false;
             }
 
 
@@ -339,8 +312,9 @@ public class isodatabase {
 
     }
 
+    int addcount = 0;
 
-    public static void addCompound(String TextFile) {
+    public void addCompound(String TextFile) {
         String linefind = null;
         int count = 0;
         int numberAtoms = 0;
@@ -381,7 +355,8 @@ public class isodatabase {
             HashMap<Graph<String, DefaultEdge>,String> secondLayer = new HashMap<>();
 
 
-            if (data.get(mainKey) == null) {
+
+            if (findCompound(TextFile)) {
 
                 /*
                 System.out.println("Molecule " + moleculeName + " added");
@@ -394,14 +369,15 @@ public class isodatabase {
                 System.out.println(key2.vertexSet());
                 */
                 //System.out.println(formula);
-                System.out.println("Molecule " + moleculeName + " added");
-                secondLayer.put(key2,moleculeName);
-
-                data.put(mainKey,secondLayer);
+                //System.out.println("Molecule " + moleculeName + " added");
+                //secondLayer.put(key2,moleculeName);
+                System.out.println("Molecule " + moleculeName + " already there");
+                //data.put(mainKey,secondLayer);
 
                 return;
             } else {
                 /*
+
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
                     if (backtrackSearch(possibleMatch, key2) == true) {
 
@@ -412,7 +388,11 @@ public class isodatabase {
                 System.out.println("Molecule " + moleculeName + " added");
                 data.get(mainKey).put(key2, moleculeName);
                 */
-                System.out.println("Molecule " + moleculeName + " already there");
+                //System.out.println("Molecule " + moleculeName + " already there");
+                System.out.println("Molecule " + moleculeName + " added");
+                secondLayer.put(key2,moleculeName);
+                data.put(mainKey,secondLayer);
+                addcount++;
                 return;
             }
         } catch (FileNotFoundException ex) {

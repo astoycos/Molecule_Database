@@ -2,6 +2,7 @@ package com.company;
 
 //import com.company.database;
 
+import java.io.File;
 import java.util.Scanner;
 
 
@@ -12,12 +13,13 @@ public class Main {
         //try {
         //String filename = "water.txt";
         System.out.println("Welcome to MoleculeDB");
-        System.out.println("This program stores chemical molecules, enter a command to continue \n");
+        System.out.println("This program stores chemical molecules, enter a command to continue");
         System.out.println("Commands should be md followed by either -addMolecule fileName, -findMolecule fileName, -findSubgraph fileName, -findMostsimilar fileName ");
 
         isodatabase DB = new isodatabase();
 
-        DB.openDB();
+
+
 
         DB.addCompound("water.txt");
         DB.addCompound("ammonia.txt");
@@ -26,14 +28,33 @@ public class Main {
         DB.addCompound("acetylene.txt");
 
 
-        DB.findCompound("water.txt",false);
-        DB.findCompound("water2.txt",false);
-        DB.findCompound("Sulfuric_Acid.txt",false);
+        DB.findCompound("water.txt");
+        DB.findCompound("water2.txt");
+        DB.findCompound("Sulfuric_Acid.txt");
+
 
         DB.findSubgraph("CH.txt");
         DB.findMostSimilar("isomeric2.txt");
 
+        DB.openDB();
         //DB.printDB();
+
+
+        File molecules = new File("molecules/");
+
+        File[] listOfFiles = molecules.listFiles();
+
+        //int count = 0;
+
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+
+            if (listOfFiles[i].isFile() && DB.data.values().size() < 10000) {
+                DB.addCompound("molecules/" + listOfFiles[i].getName());
+                //count++;
+            }else break;
+        }
+        System.out.println(DB.addcount + " molecules added" + DB.data.values().size());
 
         Scanner scanner = new Scanner(System.in);
 
@@ -47,7 +68,7 @@ public class Main {
                 if (input_splitted[1].equals("-addMolecule")) {
                     DB.addCompound(input_splitted[2]);
                 } else if (input_splitted[1].equals("-findMolecule")) {
-                    DB.findCompound(input_splitted[2], false);
+                    DB.findCompound(input_splitted[2]);
                 } else if (input_splitted[1].equals("-findSubgraph")) {
                     DB.findSubgraph(input_splitted[2]);
                 } else if (input_splitted[1].equals("-findMostsimilar")){
@@ -62,7 +83,7 @@ public class Main {
 
             }
         }catch(Exception Ex){
-            System.out.println("Invalid Input Format");
+            System.out.println("Invalid command Format");
             DB.saveDB();
             return;
         }
