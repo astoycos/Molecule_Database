@@ -30,6 +30,7 @@ public class Main {
         DB.addCompound("sodium_chloride.txt");
         long timeEnd = System.nanoTime();
 
+        System.out.println("\n Data Pull Test");
         dataCollector pulltest = new dataCollector();
         pulltest.getMolecule(8);
 
@@ -47,6 +48,7 @@ public class Main {
         DB.findCompound("water.txt");
         DB.findCompound("water2.txt");
         DB.findCompound("sulfuric_acid.txt");
+        DB.findCompound("not_found_test_molecule.txt");
 
         System.out.println("\nSubgraph search function");
         DB.findSubgraph("Mastoparan.txt");

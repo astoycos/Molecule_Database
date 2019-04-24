@@ -1,0 +1,7 @@
+fake molecule
+3
+Na
+Cl
+C
+0 1
+0 2

@@ -244,7 +244,7 @@ public class isodatabase {
             molecularProperty mainKey = new molecularProperty(formula, numberBonds,numberAtoms);
 
             if (data.get(mainKey) == null) {
-                //System.out.println("Molecule not found");
+                System.out.println("Molecule not found");
                 return false;
             } else {
                 for (Graph<String, DefaultEdge> possibleMatch: data.get(mainKey).keySet()) {
@@ -255,7 +255,7 @@ public class isodatabase {
                     }
 
                 }
-                //System.out.println("Graph " + TextFile + " not found in MoleculeDB ");
+                System.out.println("Graph " + TextFile + " not found in MoleculeDB ");
                 return false;
 
             }
